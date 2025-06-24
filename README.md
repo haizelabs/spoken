@@ -7,9 +7,6 @@
 
 currently supports batch/offline evaluation for offline evaluations/benchmarking but can easily propagate audio chunks forward
 
-TODO:
-- [] update the example wav to be haizelabs focused
-
 ```python
 import speak
 
@@ -18,11 +15,10 @@ input_asr, output_asr, output_audio = await model.run()
 
 output_asr                   # "That's quite the story..."
 len(output_audio)            # 8549ms
-model.output_audio_tokens  # 254
+model.output_audio_tokens    # 254
 ```
 
 A single interface around speech-to-speech foundation models.
-**TODO: simple desription of these models**
 
 Supports
 - [OpenAI Realtime](https://platform.openai.com/docs/guides/realtime)
