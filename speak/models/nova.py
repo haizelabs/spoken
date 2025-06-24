@@ -5,19 +5,24 @@ import json
 import os
 import time
 from typing import Any, Optional, Tuple
+from enum import Enum
+import uuid
 
 import numpy as np
 from pydub import AudioSegment
 
-from speak.base import SpeechToSpeechJailbreakHarness
+from speak.base import SpeechToSpeechHarness
 
 
-class NovaSpeechToSpeechJailbreakHarness(SpeechToSpeechJailbreakHarness):
+class NovaSpeechToSpeechHarness(SpeechToSpeechHarness):
     """
     Amazon Nova Sonic (https://aws.amazon.com/ai/generative-ai/nova/speech/)
 
     - amazon.nova-sonic-v1:0
     """
+
+    class Model(Enum):
+        AMAZON_NOVA_SONIC_V1_0 = "amazon.nova-sonic-v1:0"
 
     input_audio_sample_rate: Optional[int] = 16000
     output_audio_sample_rate: Optional[int] = 24000
@@ -30,11 +35,12 @@ class NovaSpeechToSpeechJailbreakHarness(SpeechToSpeechJailbreakHarness):
 
     def __init__(
         self,
+        model: Model,
         source_audio_signal: np.ndarray,
         system_prompt: Optional[str] = None,
-        temperature: float = 0.8,
+        temperature: float = 0.7,
     ):
-        super().__init__(source_audio_signal, system_prompt, temperature)
+        super().__init__(model, source_audio_signal, system_prompt, temperature)
 
         from aws_sdk_bedrock_runtime.client import BedrockRuntimeClient
         from aws_sdk_bedrock_runtime.config import (Config,
@@ -68,7 +74,7 @@ class NovaSpeechToSpeechJailbreakHarness(SpeechToSpeechJailbreakHarness):
 
         self.is_active = True
         self.stream = await self.bedrock_client.invoke_model_with_bidirectional_stream(
-            InvokeModelWithBidirectionalStreamOperationInput(model_id="amazon.nova-sonic-v1:0")
+            InvokeModelWithBidirectionalStreamOperationInput(model_id=self.model_name)
         )
 
         response_task = asyncio.create_task(self._process_messages())
@@ -389,7 +395,10 @@ if __name__ == "__main__":
     # os.environ["AWS_SECRET_ACCESS_KEY"] = "your-aws-secret-access-key"
     # os.environ["AWS_SESSION_TOKEN"] = "your-aws-session-token"
 
-    harness = NovaSpeechToSpeechJailbreakHarness.from_file(Path("../../examples/input.wav"))
+    harness = NovaSpeechToSpeechHarness.from_file(
+        NovaSpeechToSpeechHarness.Model.AMAZON_NOVA_SONIC_V1_0,
+        Path("/Users/nimit/Documents/haize/speak/examples/input.wav")
+    )
 
     input_transcription, output_transcription, output_audio = asyncio.run(harness.run())
     print(f"Input transcription: {input_transcription}")

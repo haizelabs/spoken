@@ -5,9 +5,20 @@
 
 </div>
 
+currently supports batch/offline evaluation for offline evaluations/benchmarking but can easily propagate audio chunks forward
+
+TODO:
+- [] update the example wav to be haizelabs focused
 
 ```python
+import speak
 
+model = speak("gpt-4o-realtime-preview-2024-12-17", "examples/input.wav")
+input_asr, output_asr, output_audio = await model.run()
+
+output_asr                   # "That's quite the story..."
+len(output_audio)            # 8549ms
+model.output_audio_tokens  # 254
 ```
 
 A single interface around speech-to-speech foundation models.

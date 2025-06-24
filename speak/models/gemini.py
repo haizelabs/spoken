@@ -4,16 +4,17 @@ import io
 import json
 import os
 import time
+from enum import Enum
 from typing import Optional, Tuple
 
 import numpy as np
 import websockets
 from pydub import AudioSegment
 
-from speak.base import SpeechToSpeechJailbreakHarness
+from speak.base import SpeechToSpeechHarness
 
 
-class GeminiSpeechToSpeechJailbreakHarness(SpeechToSpeechJailbreakHarness):
+class GeminiSpeechToSpeechHarness(SpeechToSpeechHarness):
     """
     Gemini Multimodal Live (https://ai.google.dev/gemini-api/docs/live)
 
@@ -21,17 +22,23 @@ class GeminiSpeechToSpeechJailbreakHarness(SpeechToSpeechJailbreakHarness):
     - gemini-2.5-flash-preview-native-audio-dialog
     - gemini-2.5-flash-exp-native-audio-thinking-dialog
     """
+
+    class Model(Enum):
+        GEMINI_2_5_FLASH_PREVIEW_NATIVE_AUDIO_DIALOG = "gemini-2.5-flash-preview-native-audio-dialog"
+        GEMINI_2_5_FLASH_EXP_NATIVE_AUDIO_THINKING_DIALOG = "gemini-2.5-flash-exp-native-audio-thinking-dialog"
+
     input_audio_sample_rate: Optional[int] = 16000
     output_audio_sample_rate: Optional[int] = 24000
     audio_token_frame_rate: Optional[int] = 25  # 40ms per token
 
     def __init__(
         self,
+        model: Model,
         source_audio_signal: np.ndarray,
         system_prompt: Optional[str] = None,
-        temperature: float = 0.8,
+        temperature: float = 1.0,
     ):
-        super().__init__(source_audio_signal, system_prompt, temperature)
+        super().__init__(model, source_audio_signal, system_prompt, temperature)
 
         api_key = os.environ.get("GEMINI_API_KEY")
         if not api_key:
@@ -45,7 +52,7 @@ class GeminiSpeechToSpeechJailbreakHarness(SpeechToSpeechJailbreakHarness):
         ) as websocket:
             setup_message = {
                 "setup": {
-                    "model": "models/gemini-2.5-flash-preview-native-audio-dialog",
+                    "model": f"models/{self.model_name}",
                     "generationConfig": {
                         "temperature": self.temperature,
                         "responseModalities": ["AUDIO"]
@@ -174,7 +181,10 @@ if __name__ == "__main__":
 
     # os.environ["GEMINI_API_KEY"] = "your-gemini-api-key"
 
-    harness = GeminiSpeechToSpeechJailbreakHarness.from_file(Path("../../examples/input.wav"))
+    harness = GeminiSpeechToSpeechHarness.from_file(
+        GeminiSpeechToSpeechHarness.Model.GEMINI_2_5_FLASH_PREVIEW_NATIVE_AUDIO_DIALOG,
+        Path("/Users/nimit/Documents/haize/speak/examples/input.wav")
+    )
 
     input_transcription, output_transcription, output_audio = asyncio.run(harness.run())
     print(f"Input transcription: {input_transcription}")

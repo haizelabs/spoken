@@ -1,13 +1,17 @@
 import base64
 import os
 import sys
-from abc import ABC, abstractmethod
+from abc import ABC, ABCMeta, abstractmethod
 from pathlib import Path
-from typing import Optional, Self, Tuple
+from enum import Enum
+from typing import Dict, Optional, Tuple, Type, TYPE_CHECKING
 
 import numpy as np
 from loguru import logger
 from pydub import AudioSegment
+
+if TYPE_CHECKING:
+    from typing import Self
 
 logger.remove()
 logger.add(
@@ -16,9 +20,33 @@ logger.add(
     level=os.environ.get("LOG_LEVEL", "ERROR").upper(),
 )
 
+class SpeechToSpeechHarnessMeta(ABCMeta):
+    _model_registry: Dict[str, Type['SpeechToSpeechHarness']] = {}
 
-class SpeechToSpeechJailbreakHarness(ABC):
-    input_audio_sample_rate: Optional[int] = None
+    def __new__(mcs, name, bases, namespace, **kwargs):
+        cls = super().__new__(mcs, name, bases, namespace)
+
+        if 'Model' not in namespace or not issubclass(namespace['Model'], Enum):
+            raise ValueError("Subclass of SpeechToSpeechHarness must expose available models in Model enum")
+
+        for model in namespace['Model']:
+            mcs._model_registry[model.value] = cls
+
+        return cls
+
+    def name_to_harness(model_name: str) -> Type['SpeechToSpeechHarness']:
+        if model_name not in SpeechToSpeechHarness._model_registry:
+            raise ValueError(f"Model {model_name} not found. Available models: {SpeechToSpeechHarness._model_registry.keys()}")
+        return SpeechToSpeechHarness._model_registry[model_name]
+
+
+class SpeechToSpeechHarness(ABC, metaclass=SpeechToSpeechHarnessMeta):
+    class Model(Enum):
+        pass
+
+    # model-specific constants
+    input_audio_sample_rate: Optional[int] = None # Hz
+    output_audio_sample_rate: Optional[int] = None # Hz
     audio_token_frame_rate: Optional[int] = None  # Hz of the input audio -> # tokens
 
     source_audio_signal: np.ndarray
@@ -31,6 +59,7 @@ class SpeechToSpeechJailbreakHarness(ABC):
     output_audio_bytes: bytes = b""
     output_audio: Optional[AudioSegment] = None
 
+    model_name: str
     temperature: float
 
     # state
@@ -49,10 +78,13 @@ class SpeechToSpeechJailbreakHarness(ABC):
 
     def __init__(
         self,
+        model: Model,
         source_audio_signal: np.ndarray,
         system_prompt: Optional[str] = None,
         temperature: float = 0.8,
     ):
+        self.model_name = model.value
+
         self.input_audio_signal = self.source_audio_signal = source_audio_signal
         self.input_audio_bytes = np.clip(self.input_audio_signal * (2**15), -32768, 32767).astype(np.int16).tobytes()
         self.input_audio_base64 = base64.b64encode(self.input_audio_bytes).decode("utf-8")
@@ -81,10 +113,11 @@ class SpeechToSpeechJailbreakHarness(ABC):
     @classmethod
     def from_file(
         cls,
+        model: Model,
         input_f: Path,
         system_prompt: Optional[str] = None,
         temperature: float = 0.8,
-    ) -> Self:
+    ) -> 'SpeechToSpeechHarness':
         try:
             audio = AudioSegment.from_file(input_f)
             pcm_audio = (
@@ -98,7 +131,7 @@ class SpeechToSpeechJailbreakHarness(ABC):
         except Exception as e:
             raise Exception("Cannot parse source audio.", e)
 
-        return cls(source_audio_signal, system_prompt, temperature)
+        return cls(model, source_audio_signal, system_prompt, temperature)
 
     @abstractmethod
     async def run(self) -> Tuple[Optional[str], str, AudioSegment]:

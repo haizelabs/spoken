@@ -3,21 +3,26 @@ import base64
 import io
 import json
 import os
+from enum import Enum
 from typing import Optional, Tuple
 
 import numpy as np
 import websockets
 from pydub import AudioSegment
 
-from speak.base import SpeechToSpeechJailbreakHarness
+from speak.base import SpeechToSpeechHarness
 
 
-class OpenAISpeechToSpeechJailbreakHarness(SpeechToSpeechJailbreakHarness):
+class OpenAISpeechToSpeechHarness(SpeechToSpeechHarness):
     """
     OpenAI Realtime Audio (https://platform.openai.com/docs/guides/realtime)
     - gpt-4o-realtime-preview-2024-12-17
     - gpt-4o-mini-audio-preview-2024-12-17
     """
+
+    class Model(Enum):
+        GPT_4O_REALTIME_PREVIEW_2024_12_17 = "gpt-4o-realtime-preview-2024-12-17"
+        GPT_4O_MINI_AUDIO_PREVIEW_2024_12_17 = "gpt-4o-mini-audio-preview-2024-12-17"
 
     input_audio_sample_rate: Optional[int] = 24000
     output_audio_sample_rate: Optional[int] = 24000
@@ -25,17 +30,18 @@ class OpenAISpeechToSpeechJailbreakHarness(SpeechToSpeechJailbreakHarness):
 
     def __init__(
         self,
+        model: Model,
         source_audio_signal: np.ndarray,
         system_prompt: Optional[str] = None,
         temperature: float = 0.8,
     ):
-        super().__init__(source_audio_signal, system_prompt, temperature)
+        super().__init__(model, source_audio_signal, system_prompt, temperature)
 
         api_key = os.environ.get("OPENAI_API_KEY")
         if not api_key:
             raise ValueError("OPENAI_API_KEY environment variable is required")
 
-        self.realtime_base_url = "wss://api.openai.com/v1/realtime?model=gpt-4o-realtime-preview-2024-12-17"
+        self.realtime_base_url = f"wss://api.openai.com/v1/realtime?model={self.model_name}"
         self.realtime_headers = [
             ("Authorization", f"Bearer {api_key}"),
             ("OpenAI-Beta", "realtime=v1"),
@@ -123,7 +129,10 @@ if __name__ == "__main__":
 
     # os.environ["OPENAI_API_KEY"] = "your-openai-api-key"
 
-    harness = OpenAISpeechToSpeechJailbreakHarness.from_file(Path("../../examples/input.wav"))
+    harness = OpenAISpeechToSpeechHarness.from_file(
+        OpenAISpeechToSpeechHarness.Model.GPT_4O_REALTIME_PREVIEW_2024_12_17,
+        Path("/Users/nimit/Documents/haize/speak/examples/input.wav")
+    )
 
     input_transcription, output_transcription, output_audio = asyncio.run(harness.run())
     print(f"Input transcription: {input_transcription}")
