@@ -2,9 +2,9 @@ import base64
 import os
 import sys
 from abc import ABC, ABCMeta, abstractmethod
-from pathlib import Path
 from enum import Enum
-from typing import Dict, Optional, Tuple, Type, TYPE_CHECKING
+from pathlib import Path
+from typing import TYPE_CHECKING, Dict, Optional, Tuple, Type
 
 import numpy as np
 from loguru import logger

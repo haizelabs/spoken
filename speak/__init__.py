@@ -1,13 +1,13 @@
-from .models.openai import OpenAISpeechToSpeechHarness
-from .models.nova import NovaSpeechToSpeechHarness
-from .models.gemini import GeminiSpeechToSpeechHarness
-
-from .base import SpeechToSpeechHarness, SpeechToSpeechHarnessMeta
-
+import inspect
+import sys
 from pathlib import Path
 from typing import Optional
-import sys
-import inspect
+
+from .base import SpeechToSpeechHarness, SpeechToSpeechHarnessMeta
+from .models.gemini import GeminiSpeechToSpeechHarness
+from .models.nova import NovaSpeechToSpeechHarness
+from .models.openai import OpenAISpeechToSpeechHarness
+
 
 def speak(
         model_name: str,

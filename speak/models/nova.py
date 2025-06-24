@@ -4,9 +4,9 @@ import io
 import json
 import os
 import time
-from typing import Any, Optional, Tuple
-from enum import Enum
 import uuid
+from enum import Enum
+from typing import Any, Optional, Tuple
 
 import numpy as np
 from pydub import AudioSegment
