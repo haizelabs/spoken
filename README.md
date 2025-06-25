@@ -1,16 +1,16 @@
-# speak!
+# spoken!
 <div align="center">
 
-`pip install speak`
+`pip install spoken`
 
 </div>
 
 currently supports batch/offline evaluation for offline evaluations/benchmarking but can easily propagate audio chunks forward
 
 ```python
-import speak
+import spoken
 
-model = speak("gpt-4o-realtime-preview-2024-12-17", "examples/input.wav")
+model = spoken("gpt-4o-realtime-preview-2024-12-17", "examples/input.wav")
 input_asr, output_asr, output_audio = await model.run()
 
 output_asr                   # "That's quite the story..."

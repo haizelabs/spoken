@@ -9,7 +9,7 @@ from .models.nova import NovaSpeechToSpeechHarness
 from .models.openai import OpenAISpeechToSpeechHarness
 
 
-def speak(
+def spoken(
         model_name: str,
         input_f: Path,
         system_prompt: Optional[str] = None,
@@ -29,4 +29,4 @@ def speak(
         **kwargs
     )
 
-sys.modules[__name__] = speak
+sys.modules[__name__] = spoken

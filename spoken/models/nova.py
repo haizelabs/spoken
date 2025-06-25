@@ -11,7 +11,7 @@ from typing import Any, Optional, Tuple
 import numpy as np
 from pydub import AudioSegment
 
-from speak.base import SpeechToSpeechHarness
+from spoken.base import SpeechToSpeechHarness
 
 
 class NovaSpeechToSpeechHarness(SpeechToSpeechHarness):
@@ -397,7 +397,7 @@ if __name__ == "__main__":
 
     harness = NovaSpeechToSpeechHarness.from_file(
         NovaSpeechToSpeechHarness.Model.AMAZON_NOVA_SONIC_V1_0,
-        Path("/Users/nimit/Documents/haize/speak/examples/input.wav")
+        Path("/Users/nimit/Documents/haize/spoken/examples/input.wav")
     )
 
     input_transcription, output_transcription, output_audio = asyncio.run(harness.run())

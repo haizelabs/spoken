@@ -10,7 +10,7 @@ import numpy as np
 import websockets
 from pydub import AudioSegment
 
-from speak.base import SpeechToSpeechHarness
+from spoken.base import SpeechToSpeechHarness
 
 
 class OpenAISpeechToSpeechHarness(SpeechToSpeechHarness):
@@ -131,7 +131,7 @@ if __name__ == "__main__":
 
     harness = OpenAISpeechToSpeechHarness.from_file(
         OpenAISpeechToSpeechHarness.Model.GPT_4O_REALTIME_PREVIEW_2024_12_17,
-        Path("/Users/nimit/Documents/haize/speak/examples/input.wav")
+        Path("/Users/nimit/Documents/haize/spoken/examples/input.wav")
     )
 
     input_transcription, output_transcription, output_audio = asyncio.run(harness.run())
