@@ -1,11 +1,6 @@
 # spoken!
-<div align="center">
 
-`pip install spoken`
-
-</div>
-
-currently supports batch/offline evaluation for offline evaluations/benchmarking but can easily propagate audio chunks forward
+`spoken` provides a single abstraction for a variety of audio foundation models. It is primarily designed for large-scale evaluation/benchmarking of realtime speech-to-speech models, but it can also be used as a drop-in inference library.
 
 ```python
 import spoken
@@ -18,9 +13,9 @@ len(output_audio)            # 8549ms
 model.output_audio_tokens    # 254
 ```
 
-A single interface around speech-to-speech foundation models.
+Large audio models operate on audio tokens rather than transcribed text. This enables low-latency streaming conversational audio agents that directly generate audio end-to-end. Although promising and exciting, using these models requires non-trivial configuration and state management, due to major providers differing significantly in interface.
 
-Supports
+(AFAWK,) `spoken` supports all provider speech-to-speech models.
 - [OpenAI Realtime](https://platform.openai.com/docs/guides/realtime)
   - gpt-4o-realtime-preview-2024-12-17
   - gpt-4o-mini-audio-preview-2024-12-17
@@ -31,4 +26,5 @@ Supports
   - amazon.nova-sonic-v1:0
 
 ## Installation
-- need `portaudio.h` for Amazon Nova Sonic support (mac `brew install portaudio`)
+- Simply run `pip install spoken` (Python 3.12+ required for Amazon Nova Sonic support)
+- There is a `portaudio.h` dependency for Amazon Nova Sonic support (OS X: `brew install portaudio`)
