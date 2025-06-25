@@ -1,17 +1,18 @@
 import inspect
 import sys
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Union
+
+from pydub import AudioSegment
 
 from .base import SpeechToSpeechHarness, SpeechToSpeechHarnessMeta
 from .models.gemini import GeminiSpeechToSpeechHarness
 from .models.nova import NovaSpeechToSpeechHarness
 from .models.openai import OpenAISpeechToSpeechHarness
 
-
 def spoken(
         model_name: str,
-        input_f: Path,
+        input_audio: Union[Path, AudioSegment],
         system_prompt: Optional[str] = None,
         temperature: Optional[float] = None, # TODO: use the default for the model
     ) -> SpeechToSpeechHarness:
@@ -23,10 +24,27 @@ def spoken(
         # fallback to base class default if not passed
         kwargs["temperature"] = temperature
 
-    return cls.from_file(
-        model,
-        input_f,
-        **kwargs
-    )
+    if isinstance(input_audio, Path):
+        return cls.from_file(
+            model,
+                input_audio,
+                **kwargs
+            )
+    elif isinstance(input_audio, AudioSegment):
+        return cls.from_audio(
+            model,
+            input_audio,
+            **kwargs
+        )
+    else:
+        raise ValueError(f"Invalid input type: {type(input_audio)}. Must be a Path or AudioSegment.")
 
-sys.modules[__name__] = spoken
+class SpokenWrapper:
+    def __call__(self, model_name: str, input_f: Path, system_prompt: Optional[str] = None, temperature: Optional[float] = None) -> SpeechToSpeechHarness:
+        return spoken(model_name, input_f, system_prompt, temperature)
+
+    @property
+    def models(self) -> list[str]:
+        return list(SpeechToSpeechHarnessMeta._model_registry.keys())
+
+sys.modules[__name__] = SpokenWrapper()

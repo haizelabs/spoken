@@ -120,8 +120,23 @@ class SpeechToSpeechHarness(ABC, metaclass=SpeechToSpeechHarnessMeta):
     ) -> 'SpeechToSpeechHarness':
         try:
             audio = AudioSegment.from_file(input_f)
+            return cls.from_audio(model, audio, system_prompt, temperature)
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            raise Exception("Cannot parse source audio.", e)
+
+    @classmethod
+    def from_audio(
+        cls,
+        model: Model,
+        input_audio: AudioSegment,
+        system_prompt: Optional[str] = None,
+        temperature: float = 0.8,
+    ) -> 'SpeechToSpeechHarness':
+        try:
             pcm_audio = (
-                audio.set_frame_rate(cls.input_audio_sample_rate)
+                input_audio.set_frame_rate(cls.input_audio_sample_rate)
                 .set_channels(1)
                 .set_sample_width(2)
             )
@@ -129,6 +144,8 @@ class SpeechToSpeechHarness(ABC, metaclass=SpeechToSpeechHarnessMeta):
             samples = np.array(pcm_audio.get_array_of_samples())
             source_audio_signal = samples.astype(np.float32) / (2**15)
         except Exception as e:
+            import traceback
+            traceback.print_exc()
             raise Exception("Cannot parse source audio.", e)
 
         return cls(model, source_audio_signal, system_prompt, temperature)

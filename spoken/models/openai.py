@@ -5,6 +5,7 @@ import json
 import os
 from enum import Enum
 from typing import Optional, Tuple
+import time
 
 import numpy as np
 import websockets
@@ -85,6 +86,8 @@ class OpenAISpeechToSpeechHarness(SpeechToSpeechHarness):
             if self.system_prompt:
                 kwargs["instructions"] = self.system_prompt
             await websocket.send(json.dumps({"type": "response.create", "response": kwargs}))
+            self.input_audio_sent_time = time.perf_counter()
+            self.logger.info("Input audio sent at: {}", self.input_audio_sent_time)
 
             while not self.is_complete:
                 try:
@@ -120,6 +123,10 @@ class OpenAISpeechToSpeechHarness(SpeechToSpeechHarness):
             self.logger.info("Input tokens: {}", self.input_audio_tokens)
             self.logger.info("Output tokens: {}", self.output_audio_tokens)
         elif data.get("type") == "response.audio.delta":
+            if self.first_output_token_time is None:
+                self.first_output_token_time = time.perf_counter()
+                self.logger.info("First output token received at: {}", self.first_output_token_time)
+
             delta_b64 = data["delta"]
             delta_bytes = base64.b64decode(delta_b64)
             self.output_audio_bytes += delta_bytes
