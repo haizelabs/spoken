@@ -83,7 +83,7 @@ class OpenAISpeechToSpeechHarness(SpeechToSpeechHarness):
 
             kwargs = {}
             if self.system_prompt:
-                kwargs["system_prompt"] = self.system_prompt
+                kwargs["instructions"] = self.system_prompt
             await websocket.send(json.dumps({"type": "response.create", "response": kwargs}))
 
             while not self.is_complete:
