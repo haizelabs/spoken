@@ -25,6 +25,11 @@ Large audio models operate on audio tokens rather than transcribed text. This en
 - [Amazon Nova Sonic](https://aws.amazon.com/ai/generative-ai/nova/speech/)
   - amazon.nova-sonic-v1:0
 
+## Examples
+* [Benchmarking TTFT (Time-To-First-Token) Latency](./examples/latency.py)
+* [OpenAI System Prompt](./examples/system_prompt.py)
+* more interesting things coming soon...
+
 ## Installation
 - Simply run `pip install spoken` (Python 3.12+ required for Amazon Nova Sonic support)
 - There is a `portaudio.h` dependency for Amazon Nova Sonic support (OS X: `brew install portaudio`)
