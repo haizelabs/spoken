@@ -7,7 +7,7 @@ import os
 
 harness = OpenAISpeechToSpeechHarness.from_file(
     OpenAISpeechToSpeechHarness.Model.GPT_4O_REALTIME_PREVIEW_2024_12_17,
-    Path("./examples/input.wav"),
+    Path("./examples/scooby.wav"),
     system_prompt="You are a customer service agent."
 )
 

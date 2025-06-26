@@ -397,7 +397,7 @@ if __name__ == "__main__":
 
     harness = NovaSpeechToSpeechHarness.from_file(
         NovaSpeechToSpeechHarness.Model.AMAZON_NOVA_SONIC_V1_0,
-        Path("/Users/nimit/Documents/haize/spoken/examples/input.wav")
+        Path("./examples/scooby.wav")
     )
 
     input_transcription, output_transcription, output_audio = asyncio.run(harness.run())

@@ -183,7 +183,7 @@ if __name__ == "__main__":
 
     harness = GeminiSpeechToSpeechHarness.from_file(
         GeminiSpeechToSpeechHarness.Model.GEMINI_2_5_FLASH_PREVIEW_NATIVE_AUDIO_DIALOG,
-        Path("/Users/nimit/Documents/haize/spoken/examples/input.wav")
+        Path("./examples/scooby.wav")
     )
 
     input_transcription, output_transcription, output_audio = asyncio.run(harness.run())

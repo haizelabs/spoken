@@ -137,8 +137,9 @@ if __name__ == "__main__":
     # os.environ["OPENAI_API_KEY"] = "your-openai-api-key"
 
     harness = OpenAISpeechToSpeechHarness.from_file(
-        OpenAISpeechToSpeechHarness.Model.GPT_4O_REALTIME_PREVIEW_2024_12_17,
-        Path("/Users/nimit/Documents/haize/spoken/examples/input.wav")
+        #OpenAISpeechToSpeechHarness.Model.GPT_4O_REALTIME_PREVIEW_2024_12_17,
+        OpenAISpeechToSpeechHarness.ModelGPT_4O_MINI_AUDIO_PREVIEW_2024_12_17,
+        Path("./examples/scooby.wav")
     )
 
     input_transcription, output_transcription, output_audio = asyncio.run(harness.run())
