@@ -11,7 +11,7 @@ issues = "https://github.com/haizelabs/spoken/issues"
 
 [project]
 name = "spoken"
-version = "0.1.0"
+version = "0.1.1"
 authors = [{ name = "Nimit Kalra", email = "nimit@haizelabs.com" }]
 license = { text = "MIT License" }
 description = "a single interface around speech-to-speech foundation models"

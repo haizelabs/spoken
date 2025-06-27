@@ -12,7 +12,7 @@ from .models.openai import OpenAISpeechToSpeechHarness
 
 def spoken(
         model_name: str,
-        input_audio: Union[Path, AudioSegment],
+        input_audio: Union[str, Path, AudioSegment],
         system_prompt: Optional[str] = None,
         temperature: Optional[float] = None, # TODO: use the default for the model
     ) -> SpeechToSpeechHarness:
@@ -23,6 +23,9 @@ def spoken(
     if temperature is not None:
         # fallback to base class default if not passed
         kwargs["temperature"] = temperature
+
+    if isinstance(input_audio, str):
+        input_audio = Path(input_audio)
 
     if isinstance(input_audio, Path):
         return cls.from_file(
@@ -37,10 +40,10 @@ def spoken(
             **kwargs
         )
     else:
-        raise ValueError(f"Invalid input type: {type(input_audio)}. Must be a Path or AudioSegment.")
+        raise ValueError(f"Invalid input type: {type(input_audio)}. Must be a file or AudioSegment.")
 
 class SpokenWrapper:
-    def __call__(self, model_name: str, input_f: Path, system_prompt: Optional[str] = None, temperature: Optional[float] = None) -> SpeechToSpeechHarness:
+    def __call__(self, model_name: str, input_f: Union[str, Path], system_prompt: Optional[str] = None, temperature: Optional[float] = None) -> SpeechToSpeechHarness:
         return spoken(model_name, input_f, system_prompt, temperature)
 
     @property
