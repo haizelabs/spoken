@@ -18,12 +18,10 @@ class OpenAISpeechToSpeechHarness(SpeechToSpeechHarness):
     """
     OpenAI Realtime Audio (https://platform.openai.com/docs/guides/realtime)
     - gpt-4o-realtime-preview-2024-12-17
-    - gpt-4o-mini-audio-preview-2024-12-17
     """
 
     class Model(Enum):
         GPT_4O_REALTIME_PREVIEW_2024_12_17 = "gpt-4o-realtime-preview-2024-12-17"
-        GPT_4O_MINI_AUDIO_PREVIEW_2024_12_17 = "gpt-4o-mini-audio-preview-2024-12-17"
 
     input_audio_sample_rate: Optional[int] = 24000
     output_audio_sample_rate: Optional[int] = 24000
@@ -137,8 +135,7 @@ if __name__ == "__main__":
     # os.environ["OPENAI_API_KEY"] = "your-openai-api-key"
 
     harness = OpenAISpeechToSpeechHarness.from_file(
-        #OpenAISpeechToSpeechHarness.Model.GPT_4O_REALTIME_PREVIEW_2024_12_17,
-        OpenAISpeechToSpeechHarness.ModelGPT_4O_MINI_AUDIO_PREVIEW_2024_12_17,
+        OpenAISpeechToSpeechHarness.Model.GPT_4O_REALTIME_PREVIEW_2024_12_17,
         Path("./examples/scooby.wav")
     )
 
