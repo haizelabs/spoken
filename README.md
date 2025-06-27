@@ -28,7 +28,7 @@ Large audio models operate on audio tokens rather than transcribed text. This en
 - [Gemini Multimodal Live](https://ai.google.dev/gemini-api/docs/live)
   - gemini-2.5-flash-preview-native-audio-dialog
   - gemini-2.5-flash-exp-native-audio-thinking-dialog
-- [Amazon Nova Sonic](https://aws.amazon.com/ai/generative-ai/nova/speech/)
+- [Amazon Nova Sonic](https://aws.amazon.com/ai/generative-ai/nova/speech/) (`pip install spoken[nova]`)
   - amazon.nova-sonic-v1:0
 
 ## Examples
@@ -41,5 +41,5 @@ Large audio models operate on audio tokens rather than transcribed text. This en
 </div>
 
 ## Installation
-- Simply run `pip install spoken` (Python 3.12+ required for Amazon Nova Sonic support)
-- There is a `portaudio.h` dependency for Amazon Nova Sonic support (OS X: `brew install portaudio`)
+- Simply run `pip install spoken`
+  - Python 3.12+ required + `pip install spoken[nova]` + `portaudio.h` (+ OS X: `brew install portaudio`) for Amazon Nova Sonic support

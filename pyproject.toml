@@ -11,7 +11,7 @@ issues = "https://github.com/haizelabs/spoken/issues"
 
 [project]
 name = "spoken"
-version = "0.0.1"
+version = "0.1.0"
 authors = [{ name = "Nimit Kalra", email = "nimit@haizelabs.com" }]
 license = { text = "MIT License" }
 description = "a single interface around speech-to-speech foundation models"
@@ -31,15 +31,15 @@ dependencies = [
     "loguru",
     "websockets",
     "numpy",
+]
 
-    # amazon nova
+[project.optional-dependencies]
+nova = [
     "pyaudio>=0.2.13",
     "rx>=3.2.0",
     "smithy-aws-core>=0.0.1",
     "aws_sdk_bedrock_runtime"
 ]
-
-[project.optional-dependencies]
 dev = [
     "ruff",
     "isort",
