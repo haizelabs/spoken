@@ -9,6 +9,7 @@
 `spoken` provides a single abstraction for a variety of audio foundation models. It is primarily designed for large-scale evaluation/benchmarking of realtime speech-to-speech models, but it can also be used as a drop-in inference library.
 
 ```python
+# os.environ['LOG_LEVEL'] = 'DEBUG' # detailed client/server state management logging
 import spoken
 
 model = spoken("gpt-4o-realtime-preview-2024-12-17", "examples/scooby.wav")
